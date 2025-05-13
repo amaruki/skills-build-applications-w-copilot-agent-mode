@@ -1,13 +1,23 @@
 // Initialize the MongoDB database and collections
-use octofit_db;
+db = db.getSiblingDB('octofit_db');
+
+// Drop existing collections if they exist
+db.users.drop();
+db.teams.drop();
+db.activity.drop();
+db.leaderboard.drop();
+db.workouts.drop();
 
 // Create collections
-const collections = ['users', 'teams', 'activity', 'leaderboard', 'workouts'];
-collections.forEach(collection => {
-    db.createCollection(collection);
-});
+db.createCollection('users');
+db.createCollection('teams');
+db.createCollection('activity');
+db.createCollection('leaderboard');
+db.createCollection('workouts');
 
-// Ensure unique index for users collection
-// This ensures that each user has a unique email
-// and creates a primary key for the user collection
+// Create indexes for each collection
 db.users.createIndex({ "email": 1 }, { unique: true });
+db.teams.createIndex({ "name": 1 }, { unique: true });
+db.activity.createIndex({ "activity_id": 1 }, { unique: true });
+db.leaderboard.createIndex({ "leaderboard_id": 1 }, { unique: true });
+db.workouts.createIndex({ "workout_id": 1 }, { unique: true });

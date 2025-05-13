@@ -1,27 +1,49 @@
 from rest_framework import serializers
+from .models import User, Team, Activity, Leaderboard, Workout
+from bson import ObjectId
 
-class UserSerializer(serializers.Serializer):
-    id = serializers.CharField(read_only=True)
-    email = serializers.EmailField()
-    name = serializers.CharField()
+class ObjectIdField(serializers.Field):
+    def to_representation(self, value):
+        return str(value)
 
-class TeamSerializer(serializers.Serializer):
-    id = serializers.CharField(read_only=True)
-    name = serializers.CharField()
-    members = serializers.ListField(child=serializers.CharField())
+    def to_internal_value(self, data):
+        return ObjectId(data)
 
-class ActivitySerializer(serializers.Serializer):
-    id = serializers.CharField(read_only=True)
-    user_id = serializers.CharField()
-    activity_type = serializers.CharField()
-    duration = serializers.IntegerField()
+class UserSerializer(serializers.ModelSerializer):
+    _id = ObjectIdField(read_only=True)
 
-class LeaderboardSerializer(serializers.Serializer):
-    id = serializers.CharField(read_only=True)
-    user_id = serializers.CharField()
-    score = serializers.IntegerField()
+    class Meta:
+        model = User
+        fields = ['_id', 'username', 'email', 'password', 'created_at']
+        extra_kwargs = {'password': {'write_only': True}}
 
-class WorkoutSerializer(serializers.Serializer):
-    id = serializers.CharField(read_only=True)
-    name = serializers.CharField()
-    description = serializers.CharField()
+class TeamSerializer(serializers.ModelSerializer):
+    _id = ObjectIdField(read_only=True)
+    members = UserSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Team
+        fields = ['_id', 'name', 'members', 'created_at']
+
+class ActivitySerializer(serializers.ModelSerializer):
+    _id = ObjectIdField(read_only=True)
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Activity
+        fields = ['_id', 'user', 'activity_type', 'duration', 'created_at']
+
+class LeaderboardSerializer(serializers.ModelSerializer):
+    _id = ObjectIdField(read_only=True)
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Leaderboard
+        fields = ['_id', 'user', 'score', 'updated_at']
+
+class WorkoutSerializer(serializers.ModelSerializer):
+    _id = ObjectIdField(read_only=True)
+
+    class Meta:
+        model = Workout
+        fields = ['_id', 'name', 'description', 'created_at']

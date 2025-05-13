@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "octofit_app",
+    "octofit_tracker",
     "corsheaders",
     "rest_framework",
 ]
