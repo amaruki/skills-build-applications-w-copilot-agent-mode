@@ -89,7 +89,16 @@ DATABASES = {
             'username': '',
             'password': '',
             'authSource': 'admin',
-        }
+        },
+        'LOGGING': {
+                'version': 1,
+                'loggers': {
+                    'djongo': {
+                        'level': 'DEBUG',
+                        'propagate': False,                        
+                    }
+                },
+             },
     }
 }
 
